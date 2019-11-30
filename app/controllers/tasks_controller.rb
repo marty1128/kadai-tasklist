@@ -1,33 +1,25 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
   before_action :require_user_logged_in
-  before_action :correct_user, only: [:edit, :destroy, :create, :update]
+  before_action :correct_user, only: [:edit, :destroy, :show, :update]
   
   def index
-    #@tasks = Task.all
-    if logged_in? #Slack質問中ここから
-      @task = current_user.tasks.build  # form_with 用　
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
-    end #Slack質問中ここまで
-    #counts(current_user)
-    
   end
 
   def show
-      set_task
+    
   end
 
   def new
-      @task = Task.new
+      @task = current_user.tasks.build  # 作る
   end
 
   def create
-      #@task = Task.new(task_params)
       @task = current_user.tasks.build(task_params)
 
     if @task.save
       flash[:success] = 'Task が正常に作成されました'
-      redirect_to @task
+      redirect_to root_url
     else
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
       flash.now[:danger] = 'Task が作成されませんでした'
@@ -36,15 +28,15 @@ class TasksController < ApplicationController
   end
 
   def edit
-      set_task
+      
   end
 
   def update
-       set_task
+      
 
     if @task.update(task_params)
       flash[:success] = 'Task は正常に更新されました'
-      redirect_to @task
+      redirect_to root_url #ルーティング先が違う？
     else
       flash.now[:danger] = 'Task は更新されませんでした'
       render :edit
@@ -52,7 +44,7 @@ class TasksController < ApplicationController
   end
 
   def destroy
-    set_task
+    
     @task.destroy
 
     flash[:success] = 'Task は正常に削除されました'
@@ -60,10 +52,6 @@ class TasksController < ApplicationController
   end
   
   private
-  def set_task
-    @task = Task.find(params[:id])
-  end
-  
    # Strong Parameter
   def task_params
     params.require(:task).permit(:content, :status)

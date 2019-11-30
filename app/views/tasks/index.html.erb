@@ -3,14 +3,13 @@
   <p>ログイン完了ユーザ: <%= current_user.name %></p>
 <% end %>
 
-<ul>
-  <% @tasks.each do |task| %>
-    <li><%= link_to task.id, task %> <%= task.status %> &gt; <%= task.content %></li>
-    <% if current_user == task.user %>
-            <%= link_to "タスクの削除", task, method: :delete, data: { confirm: "You sure?" }, class: 'btn' %>
-          <% end %>
-  <% end %>
-</ul>
+<% @tasks.each do |task| %>
+ <p><%= link_to task.id, task %> <%= task.status %> &gt; <%= task.content %></p>
+   <% if current_user == task.user %>
+    <%= link_to "タスクの削除", task, method: :delete, data: { confirm: "You sure?" }, class: 'btn' %>
+   <% end %>
+ <% end %>
 
+<p></p>
 <%= link_to '新規タスクの作成', new_task_path %>
 <%= link_to 'Logout', logout_path, method: :delete %>
